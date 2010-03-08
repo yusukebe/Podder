@@ -88,7 +88,7 @@ Podder - Cool and Easy standalone viewer of Perl codes and Pods.
 =head1 DESCRIPTION
 
 Podder is Cool and Easy standalone viewer of Perl codes and Pods.
-Using Plack and Bluprint css framework.
+Using Plack and Blueprint css framework.
 
 =head1 AUTHOR
 
