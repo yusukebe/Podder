@@ -1,7 +1,7 @@
 h1 { margin-top:20px; font-size:1.8em; font-weight:bold; }
 h2 { font-size:1.5em; }
 pre, pre code { font-family: 'Monaco', monospace; }
-pre { border: 1px solid #ccc; background-color: #eee; border: 1px solid #888; padding: 1em; }
+pre { border: 1px solid #ccc; background-color: #eee; border: 1px solid #888; padding: 1em; overflow:auto;}
 div.dir ul li { font-size: 1.2em; }
 div.dir ul li.dir {  list-style-image: url('icon/folder.png'); }
 div.dir ul li.file {  list-style-image: url('icon/document.png'); }
