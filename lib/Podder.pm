@@ -1,6 +1,7 @@
 package Podder;
 use Mouse;
 use MouseX::Types::Path::Class;
+use Path::Class qw( dir );
 use Plack::Request;
 use Carp;
 
@@ -8,6 +9,15 @@ our $VERSION = '0.01';
 
 has 'doc_root' =>
   ( is => 'ro', isa => 'Path::Class::Dir', required => 1, coerce => 1 );
+has 'base_root' => (
+    is       => 'ro',
+    isa      => 'Path::Class::Dir',
+    required => 1,
+    default  => sub {
+        my $dir = dir( $INC{'Podder.pm'} );
+        return $dir->parent->subdir('Podder')->subdir('root');
+    }
+);
 
 sub handler {
     my $self = shift;
@@ -22,6 +32,11 @@ sub handler {
 
 sub dispatch {
     my ( $self, $path_info ) = @_;
+
+    if( $path_info =~ m!^/podder_static! ){
+        return $self->serve_static( $path_info );
+    }
+
     my $view;
     eval {
         if ( $self->doc_root->file($path_info)->slurp() )
@@ -42,7 +57,7 @@ sub dispatch {
         return [404, ["Content-Type" => "text/plain", "Content-Length" => length $body], [$body] ];
     }
     my $root_name = $self->doc_root_name();
-    my $body = $view->render( { root_name => $root_name } );
+    my $body = $view->render( { root_name => $root_name, root => $self->base_root } );
     return [
         200,
         [
@@ -61,6 +76,13 @@ sub doc_root_name {
     return $name;
 }
 
+sub serve_static {
+    my ( $self, $path_info ) = @_;
+    $path_info =~ s!/podder_static!/static!;
+    my $body = $self->base_root->file( $path_info )->slurp;
+    return [ 200, [ 'Content-Length' => length $body ], [$body] ];
+}
+
 no Mouse;
 __PACKAGE__->meta->make_immutable();
 1;
@@ -75,15 +97,9 @@ Podder - Cool and Easy standalone viewer of Perl codes and Pods.
 
   # in your .psgi
   use Podder;
-  use Plack::Builder;
 
   my $podder = Podder->new( doc_root => './' );
-  builder {
-      enable "Plack::Middleware::Static",
-        path => qr{^/static},
-        root => './root/';
-      $podder->handler();
-  };
+  $podder->handler;
 
 =head1 DESCRIPTION
 

@@ -2,30 +2,13 @@ package Podder::View;
 use Mouse::Role;
 use MouseX::Types::Path::Class;
 use Template;
-use Path::Class qw( dir );
 use DateTime;
 use DateTime::TimeZone::Local;
-
-has 'include_path' => (
-    is       => 'rw',
-    isa      => 'Path::Class::Dir',
-    required => 1,
-    coerce   => 1,
-    default  => sub {
-        #xxx
-        my $dir = dir( $INC{'Podder.pm'} );
-        if( $dir =~ m!Podder/blib/lib/Podder.pm$! ){
-            return $dir->parent->parent->parent->subdir('tmpl');
-        }else{
-            return $dir->parent->parent->subdir('tmpl');
-        }
-    }
-);
 
 sub render_tt {
     my ( $self, $filename, $args ) = @_;
     my $config = {
-        INCLUDE_PATH => $self->include_path,
+        INCLUDE_PATH => $args->{root}->subdir('tmpl'),
         WRAPPER  => 'base.tt2',
     };
     $args->{current} = pop @{$args->{parents}};
