@@ -18,9 +18,17 @@ sub render {
     my $self    = shift;
     my $content = $self->file->slurp();
     $content = $self->highlight($content);
+    my $parents = $self->parents();
     my $pod = $self->pod();
     $self->render_tt( 'file.tt2',
-        { content => $content, title => $self->file->relative, pod => $pod } );
+        { content => $content, title => $self->file->relative, pod => $pod, parents => $parents  } );
+}
+
+sub parents {
+    my $self = shift;
+    my $path = $self->file->relative;
+    my @dirs = split '/',$path;
+    return \@dirs;
 }
 
 sub highlight {

@@ -15,6 +15,13 @@
 
 <div class="container">
   <div class="span-24 last">
+    <div class="navi">
+      [% SET path = '/' -%]
+      [% FOREACH p = parents -%]
+      [% path = path _ p _ '/'; SET href = path; -%]
+      <a href="[% href.remove('/$') | html %]">[% p | html %]</a>
+      [% END -%]
+    </div>
   <h1>[% title | html %]</h1>
   [% content %]
   <hr>

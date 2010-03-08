@@ -1,6 +1,7 @@
 package Podder::View::Dir;
 use Mouse;
 use MouseX::Types::Path::Class;
+use Path::Class qw( dir );
 with 'Podder::View';
 use Carp;
 
@@ -15,8 +16,16 @@ sub BUILDARGS {
 sub render {
     my $self     = shift;
     my @children = $self->dir->children;
+    my $parents = $self->parents;
     $self->render_tt( 'dir.tt2',
-        { children => \@children, title => $self->dir->relative } );
+        { children => \@children, title => $self->dir->relative, parents => $parents } );
+}
+
+sub parents {
+    my $self = shift;
+    my $path = $self->dir->relative;
+    my @dirs = split '/',$path;
+    return \@dirs;
 }
 
 no Mouse;
