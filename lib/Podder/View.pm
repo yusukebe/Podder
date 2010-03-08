@@ -1,6 +1,5 @@
 package Podder::View;
 use Mouse::Role;
-use MouseX::Types::Path::Class;
 use Template;
 use DateTime;
 use DateTime::TimeZone::Local;
