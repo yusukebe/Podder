@@ -23,6 +23,7 @@ sub render {
             children => \@children,
             title    => $self->dir->relative,
             parents  => $parents,
+            modified_date => $self->modified_date( $self->dir->stat ),
             %$params
         }
     );

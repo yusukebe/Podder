@@ -27,6 +27,7 @@ sub render {
             title   => $self->file->relative,
             pod     => $pod,
             parents => $parents,
+            modified_date => $self->modified_date( $self->file->stat ),
             %$params
         }
     );
