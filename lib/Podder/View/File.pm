@@ -1,8 +1,6 @@
 package Podder::View::File;
 use Mouse;
 use MouseX::Types::Path::Class;
-use Pod::Simple::XHTML;
-use Text::VimColor;
 with 'Podder::View';
 use Carp;
 
@@ -19,7 +17,7 @@ sub render {
     my $content = $self->file->slurp();
     $content = $self->highlight($content);
     my $parents = $self->parents();
-    my $pod     = $self->pod();
+    my $pod     = $self->pod2html( $self->file->stringify );
     $self->render_tt(
         'file.tt2',
         {
@@ -38,27 +36,6 @@ sub parents {
     my $path = $self->file->relative;
     my @dirs = split '/',$path;
     return \@dirs;
-}
-
-sub highlight {
-    my ( $self, $text ) = @_;
-    my $syntax = Text::VimColor->new(
-        string     => $text,
-        filetype => 'perl', #xxx
-    );
-    return $syntax->html;
-}
-
-sub pod {
-    my ( $self, $text ) = @_;
-    my $parser = Pod::Simple::XHTML->new();
-    my $body;
-    $parser->output_string( \$body );
-    $parser->html_header('');
-    $parser->html_footer('');
-    $parser->html_h_level(3);
-    $parser->parse_file( $self->file->stringify );
-    return $body;
 }
 
 no Mouse;

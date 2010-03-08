@@ -7,3 +7,5 @@ div.dir ul li.dir {  list-style-image: url('icon/folder.png'); }
 div.dir ul li.file {  list-style-image: url('icon/document.png'); }
 div.pod p { font-size:1.2em; }
 div.pod h3 { font-weight:bold; }
+#header { float:left; }
+#search{ float:right; margin-top:2em; margin-right: 100px; }

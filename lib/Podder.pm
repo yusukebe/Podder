@@ -41,37 +41,53 @@ sub handler {
     return sub {
         my $env = shift;
         my $req = Plack::Request->new( $env );
-        my $path_info = $req->path_info();
-        my $code = $self->dispatch( $path_info );
+        my $code = $self->dispatch( $req );
         return $code;
     }
 }
 
 sub dispatch {
-    my ( $self, $path_info ) = @_;
+    my ( $self, $req ) = @_;
 
+    my $path_info = $req->path_info;
     if( $path_info =~ m!^/podder_static! ){
         return $self->serve_static( $path_info );
     }
 
     my $view;
-    eval {
-        if ( $self->doc_root->file($path_info)->slurp() )
-        {
-            require Podder::View::File;
-            $view = Podder::View::File->new( $self->doc_root->file($path_info),
-                $self->dir_diff );
+
+    if ( $req->param('method') && $req->param('method') eq 'search' ) {
+        require Podder::View::Search;
+        $view = Podder::View::Search->new( query => $req->param('query') );
+    }
+    else {
+        eval {
+            if ( $self->doc_root->file($path_info)->slurp() )
+            {
+                require Podder::View::File;
+                $view =
+                  Podder::View::File->new( $self->doc_root->file($path_info),
+                    $self->dir_diff );
+            }
+            else {
+                require Podder::View::Dir;
+                $view =
+                  Podder::View::Dir->new( $self->doc_root->subdir($path_info),
+                    $self->dir_diff );
+            }
+        };
+        if ($@) {
+            warn $@;
+            my $body = $@;
+            return [
+                404,
+                [
+                    "Content-Type"   => "text/plain",
+                    "Content-Length" => length $body
+                ],
+                [$body]
+            ];
         }
-        else {
-            require Podder::View::Dir;
-            $view = Podder::View::Dir->new( $self->doc_root->subdir($path_info),
-                $self->dir_diff );
-        }
-    };
-    if( $@ ){
-        warn $@;
-        my $body = $@;
-        return [404, ["Content-Type" => "text/plain", "Content-Length" => length $body], [$body] ];
     }
     my $root_name = $self->doc_root_name();
     my $body =

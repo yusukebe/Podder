@@ -6,9 +6,10 @@
 <hr />
 <hr class="space" />
 [% END -%]
-
+[% IF content -%]
 <pre>
 [% content %]
 </pre>
+[% END -%]
 
 </div>
