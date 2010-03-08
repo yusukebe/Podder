@@ -15,7 +15,6 @@ sub handler {
         my $env = shift;
         my $req = Plack::Request->new( $env );
         my $path_info = $req->path_info();
-        warn $path_info;
         my $code = $self->dispatch( $path_info );
         return $code;
     }
@@ -32,8 +31,9 @@ sub dispatch {
         require Podder::View::Dir;
         $view = Podder::View::Dir->new( $self->doc_root->subdir($path_info) );
     }
+    my $root_name = $self->doc_root_name();
     my $body;
-    eval { $body = $view->render; };
+    eval { $body = $view->render({ root_name => $root_name }); };
     if ($@) {
         warn $@;
         return [ 500, [], [] ];
@@ -48,6 +48,14 @@ sub dispatch {
             [$body]
         ];
     }
+}
+
+sub doc_root_name {
+    my $self = shift;
+    my $path = $self->doc_root->absolute;
+    my @dir = split '/', $path;
+    my $name = pop @dir;
+    return $name;
 }
 
 no Mouse;

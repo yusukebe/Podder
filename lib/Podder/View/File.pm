@@ -15,13 +15,21 @@ sub BUILDARGS {
 }
 
 sub render {
-    my $self    = shift;
+    my ( $self, $params ) = @_;
     my $content = $self->file->slurp();
     $content = $self->highlight($content);
     my $parents = $self->parents();
-    my $pod = $self->pod();
-    $self->render_tt( 'file.tt2',
-        { content => $content, title => $self->file->relative, pod => $pod, parents => $parents  } );
+    my $pod     = $self->pod();
+    $self->render_tt(
+        'file.tt2',
+        {
+            content => $content,
+            title   => $self->file->relative,
+            pod     => $pod,
+            parents => $parents,
+            %$params
+        }
+    );
 }
 
 sub parents {
@@ -47,7 +55,7 @@ sub pod {
     $parser->output_string( \$body );
     $parser->html_header('');
     $parser->html_footer('');
-    $parser->html_h_level(2);
+    $parser->html_h_level(3);
     $parser->parse_file( $self->file->stringify );
     return $body;
 }

@@ -14,11 +14,18 @@ sub BUILDARGS {
 }
 
 sub render {
-    my $self     = shift;
+    my ( $self, $params ) = @_;
     my @children = $self->dir->children;
-    my $parents = $self->parents;
-    $self->render_tt( 'dir.tt2',
-        { children => \@children, title => $self->dir->relative, parents => $parents } );
+    my $parents  = $self->parents;
+    $self->render_tt(
+        'dir.tt2',
+        {
+            children => \@children,
+            title    => $self->dir->relative,
+            parents  => $parents,
+            %$params
+        }
+    );
 }
 
 sub parents {
