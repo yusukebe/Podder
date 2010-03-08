@@ -23,31 +23,34 @@ sub handler {
 sub dispatch {
     my ( $self, $path_info ) = @_;
     my $view;
-    if ( $self->doc_root->file($path_info)->slurp() ) {
-        require Podder::View::File;
-        $view = Podder::View::File->new( $self->doc_root->file($path_info) );
-    }
-    else {
-        require Podder::View::Dir;
-        $view = Podder::View::Dir->new( $self->doc_root->subdir($path_info) );
+    eval {
+        if ( $self->doc_root->file($path_info)->slurp() )
+        {
+            require Podder::View::File;
+            $view =
+              Podder::View::File->new( $self->doc_root->file($path_info) );
+        }
+        else {
+            require Podder::View::Dir;
+            $view =
+              Podder::View::Dir->new( $self->doc_root->subdir($path_info) );
+        }
+    };
+    if( $@ ){
+        warn $@;
+        my $body = $@;
+        return [404, ["Content-Type" => "text/plain", "Content-Length" => length $body], [$body] ];
     }
     my $root_name = $self->doc_root_name();
-    my $body;
-    eval { $body = $view->render({ root_name => $root_name }); };
-    if ($@) {
-        warn $@;
-        return [ 500, [], [] ];
-    }
-    else {
-        return [
-            200,
-            [
-                'Content-Type'   => 'text/html',
-                'Content-Length' => length $body,
-            ],
-            [$body]
-        ];
-    }
+    my $body = $view->render( { root_name => $root_name } );
+    return [
+        200,
+        [
+            'Content-Type'   => 'text/html',
+            'Content-Length' => length $body,
+        ],
+        [$body]
+    ];
 }
 
 sub doc_root_name {
