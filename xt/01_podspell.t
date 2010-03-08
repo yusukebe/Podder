@@ -8,3 +8,5 @@ __DATA__
 Yusuke Wada
 yusuke at kamawada.com
 Podder
+Plack
+standalone

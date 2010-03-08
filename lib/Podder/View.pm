@@ -14,7 +14,11 @@ has 'include_path' => (
     default  => sub {
         #xxx
         my $dir = dir( $INC{'Podder.pm'} );
-        return $dir->parent->parent->subdir('tmpl');
+        if( $dir =~ m!Podder/blib/lib/Podder.pm$! ){
+            return $dir->parent->parent->parent->subdir('tmpl');
+        }else{
+            return $dir->parent->parent->subdir('tmpl');
+        }
     }
 );
 
