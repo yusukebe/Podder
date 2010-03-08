@@ -1,0 +1,5 @@
+<ul>
+[% FOREACH c = children -%]
+  <li><a href="/[% c.stringify | html %]">[% c | html %]</a></li>
+[% END -%]
+</ul>
