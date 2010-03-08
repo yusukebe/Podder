@@ -14,6 +14,7 @@ requires 'DateTime';
 requires 'DateTime::TimeZone::Local';
 requires 'Plack::Request';
 requires 'Getopt::Long';
+install_script 'bin/podder';
 
 tests 't/*.t';
 author_tests 'xt';

@@ -18,6 +18,16 @@ has 'base_root' => (
         return $dir->parent->subdir('Podder')->subdir('root');
     }
 );
+has 'dir_diff' => (
+      is       => 'ro',
+      isa      => 'Str',
+      required => 1,
+      default  => sub {
+          my $self = shift;
+          my $rel = $self->doc_root->relative->stringify;
+          return  $rel;
+      }
+  );
 
 sub BUILD {
     my ($self, $args) = @_;
@@ -49,13 +59,13 @@ sub dispatch {
         if ( $self->doc_root->file($path_info)->slurp() )
         {
             require Podder::View::File;
-            $view =
-              Podder::View::File->new( $self->doc_root->file($path_info) );
+            $view = Podder::View::File->new( $self->doc_root->file($path_info),
+                $self->dir_diff );
         }
         else {
             require Podder::View::Dir;
-            $view =
-              Podder::View::Dir->new( $self->doc_root->subdir($path_info) );
+            $view = Podder::View::Dir->new( $self->doc_root->subdir($path_info),
+                $self->dir_diff );
         }
     };
     if( $@ ){
@@ -64,7 +74,10 @@ sub dispatch {
         return [404, ["Content-Type" => "text/plain", "Content-Length" => length $body], [$body] ];
     }
     my $root_name = $self->doc_root_name();
-    my $body = $view->render( { root_name => $root_name, root => $self->base_root } );
+    my $body =
+      $view->render(
+        { root_name => $root_name, root => $self->base_root, paths => $self->paths( $path_info ) }
+      );
     return [
         200,
         [
@@ -73,6 +86,13 @@ sub dispatch {
         ],
         [$body]
     ];
+}
+
+sub paths {
+    my ( $self, $path_info ) = @_;
+    my @paths = split '/', $path_info;
+    @paths = grep { $_ ne '' } @paths;
+    return \@paths;
 }
 
 sub doc_root_name {

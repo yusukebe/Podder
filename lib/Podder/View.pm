@@ -11,7 +11,7 @@ sub render_tt {
         INCLUDE_PATH => $args->{root}->subdir('tmpl'),
         WRAPPER  => 'base.tt2',
     };
-    $args->{current} = pop @{$args->{parents}};
+    $args->{current} = pop @{$args->{paths}};
     my $template = Template->new($config);
     my $body;
     $template->process( $filename, $args, \$body )

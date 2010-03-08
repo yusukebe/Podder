@@ -1,8 +1,8 @@
 <div class="dir">
 <ul>
 [% FOREACH c = children -%]
-  <li class="[% UNLESS c.is_dir %]file[% ELSE %]dir[% END %]"><a href="/[% c.stringify | html %]">
-  [% c.stringify.split('/').last | html %]</a></li>
+  <li class="[% UNLESS c.class.is_dir %]file[% ELSE %]dir[% END %]"><a href="/[% c.name | html %]">
+  [% c.name.split('/').last | html %]</a></li>
 [% END -%]
 </ul>
 </div>
