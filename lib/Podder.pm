@@ -19,6 +19,13 @@ has 'base_root' => (
     }
 );
 
+sub BUILD {
+    my ($self, $args) = @_;
+    if(length $self->doc_root->absolute < length dir('./')->absolute){
+        die "Podder don't work with unsafe doc_root\n";
+    }
+}
+
 sub handler {
     my $self = shift;
     return sub {
