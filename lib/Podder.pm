@@ -73,17 +73,26 @@ Podder - Cool and Easy standalone viewer of Perl codes and Pods.
 
 =head1 SYNOPSIS
 
+  # in your .psgi
   use Podder;
+  use Plack::Builder;
+
+  my $podder = Podder->new( doc_root => './' );
+  builder {
+      enable "Plack::Middleware::Static",
+        path => qr{^/static},
+        root => './root/';
+      $podder->handler();
+  };
 
 =head1 DESCRIPTION
 
-Podder is
+Podder is Cool and Easy standalone viewer of Perl codes and Pods.
+Using Plack and Bluprint css framework.
 
 =head1 AUTHOR
 
 Yusuke Wada E<lt>yusuke at kamawada.comE<gt>
-
-=head1 SEE ALSO
 
 =head1 LICENSE
 
