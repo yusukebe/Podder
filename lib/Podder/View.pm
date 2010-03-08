@@ -24,6 +24,7 @@ sub render_tt {
         INCLUDE_PATH => $self->include_path,
         WRAPPER  => 'base.tt2',
     };
+    $args->{current} = pop @{$args->{parents}};
     my $template = Template->new($config);
     my $body;
     $template->process( $filename, $args, \$body )
