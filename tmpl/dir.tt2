@@ -1,5 +1,7 @@
+<div class="dir">
 <ul>
 [% FOREACH c = children -%]
-  <li><a href="/[% c.stringify | html %]">[% c | html %]</a></li>
+  <li class="[% IF c.slurp() %]file[% ELSE %]dir[% END %]"><a href="/[% c.stringify | html %]">[% c | html %]</a></li>
 [% END -%]
 </ul>
+</div>
