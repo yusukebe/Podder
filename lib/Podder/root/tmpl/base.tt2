@@ -27,7 +27,7 @@
     [% END -%]
     </h1>
     <h2>
-    <img src="/static/icon/[% UNLESS children %]document.png[% ELSE %]folder.png[% END %]" alt="" />
+    <img src="/podder_static/icon/[% UNLESS children %]document.png[% ELSE %]folder.png[% END %]" alt="" />
     [% UNLESS current == '.' %][% current | html %][% ELSE %] / [% END -%]
     @[% modified_date | html %]
     </h2>

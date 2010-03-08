@@ -1,8 +1,13 @@
 #!/usr/bin/perl
 use Podder;
 use Plack::Runner;
+use Getopt::Long;
 
-my $podder = Podder->new( doc_root => './' );
+Getopt::Long::Configure('pass_through');
+my $doc_root = './';
+GetOptions("doc=s" => \$doc_root);
+
+my $podder = Podder->new( doc_root => $doc_root );
 my $runner = Plack::Runner->new;
 $runner->parse_options( @ARGV );
 $runner->run( $podder->handler );

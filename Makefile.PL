@@ -13,6 +13,7 @@ requires 'Template';
 requires 'DateTime';
 requires 'DateTime::TimeZone::Local';
 requires 'Plack::Request';
+requires 'Getopt::Long';
 
 tests 't/*.t';
 author_tests 'xt';
