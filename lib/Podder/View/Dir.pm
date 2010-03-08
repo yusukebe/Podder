@@ -21,7 +21,7 @@ sub render {
         'dir.tt2',
         {
             children => \@children,
-            title    => $self->dir->relative,
+            title    => $self->dir->relative eq '.' ? '' : $self->dir->relative,
             parents  => $parents,
             modified_date => $self->modified_date( $self->dir->stat ),
             %$params
