@@ -1,0 +1,8 @@
+#!/usr/bin/perl
+use Podder;
+use Plack::Runner;
+
+my $podder = Podder->new( doc_root => './' );
+my $runner = Plack::Runner->new;
+$runner->parse_options( @ARGV );
+$runner->run( $podder->handler );
