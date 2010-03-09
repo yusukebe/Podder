@@ -37,14 +37,15 @@ sub pod2html {
 sub inao2html {
     my ( $self, $file ) = @_;
     #XXX
+    my $text;
     eval {
-        my $text = file( $file )->slurp;
+        $text = file( $file )->slurp;
         require Acme::Text::Inao;
         require Encode;
         my $html = Acme::Text::Inao->new->from_inao( Encode::decode( 'utf8',$text ) )->to_html();
         $text = Encode::encode('utf8', $html);
-        return $text;
     };
+    return $text unless $@;
     return;
 }
 
