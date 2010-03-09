@@ -3,6 +3,8 @@ use Mouse;
 with 'Podder::Role';
 use MouseX::Types::Path::Class;
 use Path::Class qw( dir );
+use File::Slurp qw( slurp );
+use Podder::Dir::Ignore;
 use Carp;
 
 has 'dir' =>
@@ -31,14 +33,13 @@ sub children {
     my $self = shift;
     my @children;
     my $diff = $self->dir_diff;
-    my $lines = $self->ignores;
     for my $c ( $self->dir->children ) {
         my $name = $c->relative->stringify;
         if( $diff ne '.' ) {
             $name =~ s/$diff//;
             $name =~ s/^\///;
         }
-        if ( $self->is_ignore( $name, $lines ) ){
+        if ( $self->is_ignore( $name ) ){
         }else{
             push @children , { name => $name, class => $c };
         }
@@ -54,35 +55,14 @@ sub parents {
 }
 
 sub is_ignore {
-    my ( $self, $target, $list ) = @_;
-    for my $str ( @$list ){
+    my ( $self, $target ) = @_;
+    my $lines = Podder::Dir::Ignore->ignores;
+    for my $str ( @$lines ){
         return 1 if $target =~ /$str/;
     }
     return;
 }
 
-sub ignores {
-    my @lines;
-    while(<DATA>){
-        next unless $_;
-        chomp($_);
-        push @lines, $_;
-    }
-    return \@lines;
-}
-
 no Mouse;
 __PACKAGE__->meta->make_immutable();
 1;
-
-__DATA__
-\bRCS\b
-\bCVS\b
-~$
-^#
-\.old$
-^blib
-^pm_to_blib
-\.gz$
-\.svn
-\.git$
