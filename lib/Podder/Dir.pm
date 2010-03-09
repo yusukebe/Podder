@@ -85,4 +85,4 @@ __DATA__
 ^pm_to_blib
 \.gz$
 \.svn
-^\.git
+\.git$
