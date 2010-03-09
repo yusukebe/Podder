@@ -3,6 +3,9 @@ use Mouse;
 use MouseX::Types::Path::Class;
 with 'Podder::Role';
 use Carp;
+use Podder::File::Pod;
+use Podder::File::Inao;
+use Podder::File::Hatena;
 
 has 'file' =>
   ( is => 'ro', isa => 'Path::Class::File', required => 1, coerce => 1 );
@@ -44,13 +47,13 @@ sub pod {
     my $self = shift;
     my $pod;
     if( grep { $self->extention eq $_ } qw/pl pod pm/ ){
-      $pod = $self->pod2html( $self->file );
+      $pod = Podder::File::Pod->html( $self->file );
       return $pod if $pod;
     }
     if( grep { $self->extention eq $_ } qw/txt/ ){
-      $pod = $self->inao2html( $self->file );
+      $pod = Podder::File::Inao->html( $self->file );
       return $pod if $pod;
-      $pod = $self->hatena2html( $self->file );
+      $pod = Podder::File::Hatena->html( $self->file );
       return $pod if $pod;
     }
     return;
