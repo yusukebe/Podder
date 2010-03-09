@@ -20,6 +20,7 @@ Hoge::Moge - Test test test test.
 =head1 DESCRIPTION
 
 Hoge::Moge is Test test test test.
+日本語[ Japanese ]
 
 =head1 AUTHOR
 

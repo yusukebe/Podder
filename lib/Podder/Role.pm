@@ -3,6 +3,8 @@ use Mouse::Role;
 use DateTime;
 use DateTime::TimeZone::Local;
 use Path::Class qw( file );
+use Encode;
+
 sub modified_date {
     my ( $self, $stat ) = @_;
     my $dt = DateTime->from_epoch( epoch => $stat->mtime);
@@ -23,6 +25,7 @@ sub highlight {
 
 sub pod2html {
     my ( $self, $file ) = @_;
+    $file = file ($file) unless ref $file eq 'Path::Class::File';
     require Pod::Simple::XHTML;
     my $parser = Pod::Simple::XHTML->new();
     my $body;
@@ -30,7 +33,8 @@ sub pod2html {
     $parser->html_header('');
     $parser->html_footer('');
     $parser->html_h_level(3);
-    $parser->parse_file( $file );
+    my @documents = map { Encode::decode('utf8',$_) } $file->slurp;
+    $parser->parse_string_document( @documents );
     return $body;
 }
 
@@ -39,9 +43,8 @@ sub inao2html {
     #XXX
     my $text;
     eval {
-        $text = file( $file )->slurp;
+        $text = $file->slurp;
         require Acme::Text::Inao;
-        require Encode;
         my $html = Acme::Text::Inao->new->from_inao( Encode::decode( 'utf8',$text ) )->to_html();
         $text = Encode::encode('utf8', $html);
     };
