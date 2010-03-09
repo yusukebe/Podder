@@ -36,14 +36,16 @@ sub pod2html {
 
 sub inao2html {
     my ( $self, $file ) = @_;
+    #XXX
     eval {
+        my $text = file( $file )->slurp;
         require Acme::Text::Inao;
+        require Encode;
+        my $html = Acme::Text::Inao->new->from_inao( Encode::decode( 'utf8',$text ) )->to_html();
+        $text = Encode::encode('utf8', $html);
+        return $text;
     };
-    return if $@;
-    my $text = file( $file )->slurp;
-    require Encode;
-    my $html = Acme::Text::Inao->new->from_inao( Encode::decode( 'utf8',$text ) )->to_html();
-    Encode::encode('utf8', $html);
+    return;
 }
 
 no Mouse::Role;
