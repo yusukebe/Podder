@@ -6,6 +6,14 @@ use Carp;
 
 has 'file' =>
   ( is => 'ro', isa => 'Path::Class::File', required => 1, coerce => 1 );
+has 'extention' => ( is => 'rw', isa => 'Str', lazy_build => 1 );
+
+sub _build_extention {
+    my $self = shift;
+    my $ext = '';
+    ($ext) = $self->file->stringify =~ /\.([^\.]+)$/;
+    return $ext;
+}
 
 sub BUILDARGS {
     my ( $self, $file ) = @_;
@@ -35,12 +43,16 @@ sub stash {
 sub pod {
     my $self = shift;
     my $pod;
-    $pod = $self->pod2html( $self->file );
-    return $pod if $pod;
-    $pod = $self->inao2html( $self->file );
-    return $pod if $pod;
-    $pod = $self->hatena2html( $self->file );
-    return $pod if $pod;
+    if( grep { $self->extention eq $_ } qw/pl pod pm/ ){
+      $pod = $self->pod2html( $self->file );
+      return $pod if $pod;
+    }
+    if( grep { $self->extention eq $_ } qw/txt/ ){
+      $pod = $self->inao2html( $self->file );
+      return $pod if $pod;
+      $pod = $self->hatena2html( $self->file );
+      return $pod if $pod;
+    }
     return;
 }
 
