@@ -13,9 +13,9 @@ has 'extention' => ( is => 'rw', isa => 'Str', lazy_build => 1 );
 
 sub _build_extention {
     my $self = shift;
-    my $ext = '';
+    my $ext;
     ($ext) = $self->file->stringify =~ /\.([^\.]+)$/;
-    return $ext;
+    return $ext || '';
 }
 
 sub BUILDARGS {
