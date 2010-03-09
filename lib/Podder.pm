@@ -53,11 +53,11 @@ sub dispatch {
     }
 
     my $stash = $self->dispatcher->dispatch( $req );
+    return $self->handle_404 unless $stash;
 
     if( $stash->{is_binary} ){
-	return [200,[ 'Content-Length' => length $stash->{content} ],[$stash->{content}]];
+        return [200,[ 'Content-Length' => length $stash->{content} ],[$stash->{content}]];
     }
-    return [ 404, [], [] ] unless $stash;
 
     my $root_name = $self->doc_root_name;
     require Podder::View;
@@ -70,6 +70,7 @@ sub dispatch {
             %$stash
         }
     );
+    return $self->handle_404 unless $body;
     return [
         200,
         [
@@ -78,6 +79,11 @@ sub dispatch {
         ],
         [$body]
     ];
+}
+
+sub handle_404 {
+    my $content = 'Document not found.';
+    return [ 404, [ 'Content-Length' => length $content ], [ $content ] ];
 }
 
 sub paths {

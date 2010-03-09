@@ -11,8 +11,10 @@ sub render {
     $args->{current} = pop @{$args->{paths}} unless $args->{current};
     my $template = Template->new($config);
     my $body;
-    $template->process( $args->{template}, $args, \$body )
-      || Carp::croak( $template->error() );
+    eval{
+        $template->process( $args->{template}, $args, \$body )
+    };
+    return if $@;
     return $body;
 }
 

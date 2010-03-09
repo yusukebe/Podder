@@ -41,7 +41,7 @@ sub children {
             $name =~ s/^\///;
         }
         if ( $checker->is_ignore( $name ) ){
-	    next;
+            next;
         }else{
             push @children , { name => $name, class => $c };
         }
