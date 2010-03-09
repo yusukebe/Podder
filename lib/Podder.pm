@@ -3,6 +3,7 @@ use Mouse;
 use MouseX::Types::Path::Class;
 use Path::Class qw( dir );
 use Plack::Request;
+use Podder::Dispatcher;
 use Carp;
 
 our $VERSION = '0.01';
@@ -18,16 +19,14 @@ has 'base_root' => (
         return $dir->parent->subdir('Podder')->subdir('root');
     }
 );
-has 'dir_diff' => (
-      is       => 'ro',
-      isa      => 'Str',
-      required => 1,
-      default  => sub {
-          my $self = shift;
-          my $rel = $self->doc_root->relative->stringify;
-          return  $rel;
-      }
-  );
+
+has 'dispatcher' =>
+  ( is => 'ro', isa => 'Podder::Dispatcher', required => 1, lazy_build => 1 );
+
+sub _build_dispatcher {
+    my $self = shift;
+    Podder::Dispatcher->new( doc_root => $self->doc_root );
+}
 
 sub BUILD {
     my ($self, $args) = @_;
@@ -54,46 +53,21 @@ sub dispatch {
         return $self->serve_static( $path_info );
     }
 
-    my $view;
+    my $stash = $self->dispatcher->dispatch( $req );
 
-    if ( $req->param('method') && $req->param('method') eq 'search' ) {
-        require Podder::View::Search;
-        $view = Podder::View::Search->new( query => $req->param('query') );
-    }
-    else {
-        eval {
-            if ( $self->doc_root->file($path_info)->slurp() )
-            {
-                require Podder::View::File;
-                $view =
-                  Podder::View::File->new( $self->doc_root->file($path_info),
-                    $self->dir_diff );
-            }
-            else {
-                require Podder::View::Dir;
-                $view =
-                  Podder::View::Dir->new( $self->doc_root->subdir($path_info),
-                    $self->dir_diff );
-            }
-        };
-        if ($@) {
-            warn $@;
-            my $body = $@;
-            return [
-                404,
-                [
-                    "Content-Type"   => "text/plain",
-                    "Content-Length" => length $body
-                ],
-                [$body]
-            ];
+    return [ 404, [], [] ] unless $stash;
+
+    my $root_name = $self->doc_root_name;
+    require Podder::View;
+    my $view = Podder::View->new;
+    my $body = $view->render(
+        {
+            root_name => $root_name,
+            root      => $self->base_root,
+            paths     => $self->paths($path_info),
+            %$stash
         }
-    }
-    my $root_name = $self->doc_root_name();
-    my $body =
-      $view->render(
-        { root_name => $root_name, root => $self->base_root, paths => $self->paths( $path_info ) }
-      );
+    );
     return [
         200,
         [

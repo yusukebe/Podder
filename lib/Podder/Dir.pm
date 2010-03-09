@@ -1,8 +1,8 @@
-package Podder::View::Dir;
+package Podder::Dir;
 use Mouse;
+with 'Podder::Role';
 use MouseX::Types::Path::Class;
 use Path::Class qw( dir );
-with 'Podder::View';
 use Carp;
 
 has 'dir' =>
@@ -14,20 +14,17 @@ sub BUILDARGS {
     return { dir => $dir, dir_diff => $dir_diff };
 }
 
-sub render {
-    my ( $self, $params ) = @_;
+sub stash {
+    my $self     = shift;
     my $children = $self->children;
     my $parents  = $self->parents;
-    $self->render_tt(
-        'dir.tt2',
-        {
-            children => $children,
-            title    => $self->dir->relative eq '.' ? '' : $self->dir->relative,
-            parents  => $parents,
-            modified_date => $self->modified_date( $self->dir->stat ),
-            %$params,
-        }
-    );
+    return {
+        template => 'dir.tt2',
+        children => $children,
+        title    => $self->dir->relative eq '.' ? '' : $self->dir->relative,
+        parents  => $parents,
+        modified_date => $self->modified_date( $self->dir->stat ),
+    };
 }
 
 sub children {

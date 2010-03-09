@@ -1,7 +1,7 @@
-package Podder::View::File;
+package Podder::File;
 use Mouse;
 use MouseX::Types::Path::Class;
-with 'Podder::View';
+with 'Podder::Role';
 use Carp;
 
 has 'file' =>
@@ -12,23 +12,20 @@ sub BUILDARGS {
     return { file => $file };
 }
 
-sub render {
-    my ( $self, $params ) = @_;
+sub stash {
+    my $self    = shift;
     my $content = $self->file->slurp();
     $content = $self->highlight($content);
     my $parents = $self->parents();
     my $pod     = $self->pod2html( $self->file->stringify );
-    $self->render_tt(
-        'file.tt2',
-        {
-            content => $content,
-            title   => $self->file->relative,
-            pod     => $pod,
-            parents => $parents,
-            modified_date => $self->modified_date( $self->file->stat ),
-            %$params
-        }
-    );
+    return {
+        template      => 'file.tt2',
+        content       => $content,
+        title         => $self->file->relative,
+        pod           => $pod,
+        parents       => $parents,
+        modified_date => $self->modified_date( $self->file->stat ),
+    };
 }
 
 sub parents {

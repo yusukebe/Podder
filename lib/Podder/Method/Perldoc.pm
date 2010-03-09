@@ -1,6 +1,6 @@
-package Podder::View::Search;
+package Podder::Method::Perldoc;
 use Mouse;
-with 'Podder::View';
+with 'Podder::Role';
 use Pod::Simple::Search;
 
 has 'searcher' => (
@@ -13,20 +13,17 @@ has 'searcher' => (
 
 has 'query' => ( is => 'rw', isa => 'Str', required => 1 );
 
-sub render {
-    my ($self, $params) = @_;
+sub stash {
+    my $self   = shift;
     my $locale = $self->searcher->find( $self->query );
     my $pod;
-    $pod = $self->pod2html( $locale ) if $locale;
-    $self->render_tt(
-        'file.tt2',
-        {
-            title   => $self->query,
-            pod     => $pod,
-            current => "perldoc " . $self->query, #xxx
-            %$params,
-        }
-    );
+    $pod = $self->pod2html($locale) if $locale;
+    return {
+        template => 'file.tt2',
+        title    => $self->query,
+        pod      => $pod,
+        current  => "perldoc " . $self->query,    #XXX
+    };
 }
 
 no Mouse;
