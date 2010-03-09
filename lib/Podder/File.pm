@@ -20,11 +20,7 @@ sub stash {
     }
     $content = $self->highlight($content);
     my $parents = $self->parents();
-    my $pod;
-    if( $pod = $self->pod2html( $self->file ) ){
-    }else{
-        $pod = $self->inao2html( $self->file );
-    }
+    my $pod = $self->pod;
     return {
         template      => 'file.tt2',
         content       => $content,
@@ -33,6 +29,19 @@ sub stash {
         parents       => $parents,
         modified_date => $self->modified_date( $self->file->stat ),
     };
+}
+
+#XXX no sense
+sub pod {
+    my $self = shift;
+    my $pod;
+    $pod = $self->pod2html( $self->file );
+    return $pod if $pod;
+    $pod = $self->inao2html( $self->file );
+    return $pod if $pod;
+    $pod = $self->hatena2html( $self->file );
+    return $pod if $pod;
+    return;
 }
 
 sub parents {
