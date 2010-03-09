@@ -6,8 +6,9 @@ use Getopt::Long;
 Getopt::Long::Configure('pass_through');
 my $doc_root = './';
 GetOptions("doc=s" => \$doc_root);
-
 my $podder = Podder->new( doc_root => $doc_root );
-my $runner = Plack::Runner->new;
+my $runner = Plack::Runner->new( env => 'test' );
 $runner->parse_options( @ARGV );
+my $options = $runner->{options};
+warn "Podder is running port: $options->[3]\n";
 $runner->run( $podder->handler );
