@@ -19,7 +19,6 @@ has 'base_root' => (
         return $dir->parent->subdir('Podder')->subdir('root');
     }
 );
-
 has 'dispatcher' =>
   ( is => 'ro', isa => 'Podder::Dispatcher', required => 1, lazy_build => 1 );
 
