@@ -12,7 +12,9 @@ sub dispatch {
     my ( $self, $req ) = @_;
     return $self->dispatch_method($req) if $req->param('method');
     my $path_info = $req->path_info;
-    return if -f $self->doc_root->file($path_info)->stringify;
+    return
+      unless ( -f $self->doc_root->file($path_info)->stringify
+        || $self->doc_root->subdir($path_info)->stringify );
     my $c;
     eval {
         if ( $self->doc_root->file($path_info)->slurp() )
