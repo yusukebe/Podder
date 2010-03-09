@@ -34,7 +34,7 @@ sub stash {
 #XXX no sense
 sub pod {
     my $self = shift;
-    my $pod = '';
+    my $pod;
     $pod = $self->pod2html( $self->file );
     return $pod if $pod;
     $pod = $self->inao2html( $self->file );
