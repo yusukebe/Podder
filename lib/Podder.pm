@@ -107,7 +107,7 @@ __END__
 
 =head1 NAME
 
-Podder - Cool and Easy standalone viewer of Perl codes and Pods.
+Podder - Cool and Easy standalone viewer of Perl codes, Pods, and Inao style Texts.
 
 =head1 SYNOPSIS
 
