@@ -45,7 +45,7 @@ sub inao2html {
     eval {
         my $text = $file->slurp;
         require Acme::Text::Inao;
-        my $html = Acme::Text::Inao->new->from_inao( Encode::decode( 'utf8',$text ) )->to_html();
+        $html = Acme::Text::Inao->new->from_inao( Encode::decode( 'utf8',$text ) )->to_html();
         $html = Encode::encode('utf8', $html);
     };
     return $html unless $@;
