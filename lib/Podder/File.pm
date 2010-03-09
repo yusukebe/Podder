@@ -17,7 +17,11 @@ sub stash {
     my $content = $self->file->slurp();
     $content = $self->highlight($content);
     my $parents = $self->parents();
-    my $pod     = $self->pod2html( $self->file->stringify );
+    my $pod;
+    if( $pod = $self->pod2html( $self->file->stringify ) ){
+    }else{
+        $pod = $self->inao2html( $self->file->stringify );
+    }
     return {
         template      => 'file.tt2',
         content       => $content,
