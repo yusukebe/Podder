@@ -33,13 +33,15 @@ sub children {
     my $self = shift;
     my @children;
     my $diff = $self->dir_diff;
+    my $checker = Podder::Dir::Ignore->new;
     for my $c ( $self->dir->children ) {
         my $name = $c->relative->stringify;
         if( $diff ne '.' ) {
             $name =~ s/$diff//;
             $name =~ s/^\///;
         }
-        if ( $self->is_ignore( $name ) ){
+        if ( $checker->is_ignore( $name ) ){
+	    next;
         }else{
             push @children , { name => $name, class => $c };
         }
@@ -52,15 +54,6 @@ sub parents {
     my $path = $self->dir->relative;
     my @dirs = split '/', $path;
     return \@dirs;
-}
-
-sub is_ignore {
-    my ( $self, $target ) = @_;
-    my $lines = Podder::Dir::Ignore->ignores;
-    for my $str ( @$lines ){
-        return 1 if $target =~ /$str/;
-    }
-    return;
 }
 
 no Mouse;

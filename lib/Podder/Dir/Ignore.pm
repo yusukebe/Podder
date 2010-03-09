@@ -1,17 +1,17 @@
 package Podder::Dir::Ignore;
+use Mouse;
 
 sub ignores {
     my $list = <<END_OF_LIST;
-\bRCS\b
-\bCVS\b
 ~$
 ^#
-\.old$
+.old$
 ^blib
 ^pm_to_blib
-\.gz$
-\.svn
-\.git
+.svn
+.git
+.DS_Store
+Thumbs.db
 END_OF_LIST
     my @lines = split '\n', $list;
     my @list;
@@ -22,6 +22,18 @@ END_OF_LIST
     }
     return \@list;
 }
+
+sub is_ignore {
+    my ( $self, $target ) = @_;
+    my @paths = split '/', $target;
+    $target = pop @paths;
+    my $lines = $self->ignores;
+    for my $str ( @$lines ){
+        return 1 if $target =~ /$str/;
+    }
+    return;
+}
+
 1;
 
 __DATA__
