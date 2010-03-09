@@ -15,6 +15,9 @@ sub BUILDARGS {
 sub stash {
     my $self    = shift;
     my $content = $self->file->slurp();
+    if( -B $self->file->stringify ){
+	return { content => $content, is_binary => 1 };
+    }
     $content = $self->highlight($content);
     my $parents = $self->parents();
     my $pod;

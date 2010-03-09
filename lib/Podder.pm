@@ -54,6 +54,9 @@ sub dispatch {
 
     my $stash = $self->dispatcher->dispatch( $req );
 
+    if( $stash->{is_binary} ){
+	return [200,[ 'Content-Length' => length $stash->{content} ],[$stash->{content}]];
+    }
     return [ 404, [], [] ] unless $stash;
 
     my $root_name = $self->doc_root_name;
