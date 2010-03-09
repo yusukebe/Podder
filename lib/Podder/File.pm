@@ -18,9 +18,9 @@ sub stash {
     $content = $self->highlight($content);
     my $parents = $self->parents();
     my $pod;
-    if( $pod = $self->pod2html( $self->file->stringify ) ){
+    if( $pod = $self->pod2html( $self->file ) ){
     }else{
-        $pod = $self->inao2html( $self->file->stringify );
+        $pod = $self->inao2html( $self->file );
     }
     return {
         template      => 'file.tt2',
