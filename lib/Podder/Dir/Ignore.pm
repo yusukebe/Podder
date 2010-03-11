@@ -3,11 +3,8 @@ use Mouse;
 
 sub ignores {
     my $list = <<END_OF_LIST;
-~$
-^#
-.old$
-^blib
-^pm_to_blib
+blib
+pm_to_blib
 .svn
 .git
 .DS_Store
