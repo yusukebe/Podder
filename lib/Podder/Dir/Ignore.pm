@@ -2,13 +2,14 @@ package Podder::Dir::Ignore;
 use Mouse;
 
 sub ignores {
-    my $list = <<END_OF_LIST;
+    my $list = <<'END_OF_LIST';
 blib
 pm_to_blib
 .svn
 .git
 .DS_Store
 Thumbs.db
+Makefile.old
 END_OF_LIST
     my @lines = split '\n', $list;
     my @list;
@@ -26,7 +27,7 @@ sub is_ignore {
     $target = pop @paths;
     my $lines = $self->ignores;
     for my $str ( @$lines ){
-        return 1 if $target =~ /$str/;
+        return 1 if $target =~ /^$str/;
     }
     return;
 }

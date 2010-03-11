@@ -4,7 +4,7 @@ use MouseX::Types::Path::Class;
 use Path::Class qw( dir );
 use Plack::Request;
 use Podder::Dispatcher;
-use Carp;
+use Carp ();
 
 our $VERSION = '0.01';
 
@@ -120,7 +120,10 @@ Podder - Cool and Easy standalone viewer of Perl codes, Pods, and Inao style Tex
 
 =head1 SYNOPSIS
 
-  # in your .psgi
+  $ podder -p 5555
+
+in your .psgi
+
   use Podder;
 
   my $podder = Podder->new( doc_root => './' );
